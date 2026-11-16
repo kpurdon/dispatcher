@@ -1,6 +1,6 @@
 # iTerm2 sessions
 
-The existing [tabs helper](../../tabs/SKILL.md) retains its command line and background grouping behavior. Read its [Codex integration](../../tabs/references/codex.md) for origin verification. The scoped Dispatcher launch returns a `uv run --quiet --script .../tabs.py open` argument array with `codex --` and an assignment file. Launch arguments are not shell source.
+The existing [tabs helper](../../tabs/SKILL.md) retains its command line and background grouping behavior. Read its [Codex integration](../../tabs/references/codex.md) for origin verification. The scoped dispatcher launch returns a `uv run --quiet --script .../tabs.py open` argument array with `codex --` and an assignment file. Launch arguments are not shell source.
 
 Supply a launch specification like this, using verified paths and IDs:
 

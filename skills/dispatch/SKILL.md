@@ -5,7 +5,7 @@ description: Launch, inspect, message, and retire initiative-scoped agent sessio
 
 # Dispatch agent sessions
 
-Use [registry.py](scripts/registry.py) with Python 3.10+ to keep one private local registry outside repositories. Consult `--help` for commands. The caller supplies the initiative, verified lead identity, assignment, and authority. Builder owns delivery policy; Dispatcher owns membership and native session mechanics. It does not restart agents or decide completion.
+Use [registry.py](scripts/registry.py) with Python 3.10+ to keep one private local registry outside repositories. Consult `--help` for commands. The caller supplies the initiative, verified lead identity, assignment, and authority. Builder owns delivery policy; dispatcher owns membership and native session mechanics. It does not restart agents or decide completion.
 
 ## Select the interface
 
@@ -21,7 +21,7 @@ For a new assignment, `prepare --action launch --request-key ... --assignment ..
 
 Reusing a request key returns its existing identity without another executable call. `list` includes pending request IDs; `request --request-id ...` reads the saved plan for reconciliation, not redispatch. For a lost T3 launch reply, `replay-launch` returns only the original call with unchanged `clientRequestId`, which T3 deduplicates. This does not apply to iTerm launches or follow-up messages. Do not retry with a new key or assignment label to bypass uncertainty. Reconcile on the original backend. Retain native results on registry failure so they can complete the same request. Only `cancel --no-effect-evidence ...` when the call was never dispatched or the backend proves no resource/action resulted. A timeout, missing acknowledgement, or failed read is not that proof.
 
-Launches carry the member and request IDs in their initial assignment. For iTerm, Dispatcher preserves the caller's brief and makes a private durable copy beside the registry with this context. Associate the receiver's Codex ID through that exact launch context and native evidence, never through a similar title. Do not add routine progress or completion reporting to establish membership.
+Launches carry the member and request IDs in their initial assignment. For iTerm, dispatcher preserves the caller's brief and makes a private durable copy beside the registry with this context. Associate the receiver's Codex ID through that exact launch context and native evidence, never through a similar title. Do not add routine progress or completion reporting to establish membership.
 
 For transfers, stop the previous writer and obtain the named successor's acceptance of remaining obligations before `transfer`. Record that evidence. Only the recorded lead performs registry mutations; receivers can supply their verified native identities through a permitted session channel when needed.
 
@@ -32,6 +32,6 @@ Read the selected reference before preparing its calls:
 - [iTerm2](references/iterm2.md): background tabs, grouping, Codex identity, and guarded closure.
 - [T3](references/t3.md): native project/worktree binding, queued messages, and verified archiving.
 
-Before retirement, the delivery owner verifies acceptance, cancellation, or accepted transfer and checks active descendants and unfinished work. Put evidence in `--evidence`. After executing retirement, `complete` requires exact-target closure/archive readback. Session retirement and worktree deletion are separate; Dispatcher never deletes worktrees.
+Before retirement, the delivery owner verifies acceptance, cancellation, or accepted transfer and checks active descendants and unfinished work. Put evidence in `--evidence`. After executing retirement, `complete` requires exact-target closure/archive readback. Session retirement and worktree deletion are separate; dispatcher never deletes worktrees.
 
 The registry is a coordination boundary, not a sandbox. Caller identities and receipts must come from observed native results. Direct native tools remain available, so do not use them to bypass membership checks. Existing standalone `$tabs` operations remain available for explicit terminal work outside PM management.

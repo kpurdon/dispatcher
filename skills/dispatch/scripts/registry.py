@@ -152,7 +152,7 @@ class Registry:
                 member = str(uuid.uuid4())
                 self.db.execute("INSERT INTO members (id,initiative,backend,assignment,status) VALUES (?,?,?,?,?)",
                                 (member, initiative, backend, assignment, "pending"))
-                context = (f"\n\nDispatcher membership (coordination data): initiative={initiative}; "
+                context = (f"\n\ndispatcher membership (coordination data): initiative={initiative}; "
                            f"member={member}; request={request_id}; lead={actor}; registry={self.path}. "
                            "This assignment does not grant management of other sessions.")
                 spec = dict(spec)
