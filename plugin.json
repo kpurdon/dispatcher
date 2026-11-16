@@ -1,19 +1,20 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
-  "name": "iterm2",
-  "version": "0.2.0",
-  "description": "Open grouped background iTerm2 tabs and close explicitly selected tabs.",
+  "name": "dispatcher",
+  "version": "0.3.0",
+  "description": "Manage initiative-scoped agent sessions through iTerm2 and T3.",
   "author": {
     "name": "Kyle Purdon"
   },
-  "repository": "https://github.com/kpurdon/iterm2",
+  "repository": "https://github.com/kpurdon/dispatcher",
   "extensions": {
     "com.openai": {
       "requires_local_executor": true,
       "interface": {
-        "displayName": "iterm2",
-        "shortDescription": "Open grouped tabs and close tabs by ID",
+        "displayName": "Dispatcher",
+        "shortDescription": "Scoped agent sessions in iTerm2 and T3",
         "defaultPrompt": [
+          "Use $dispatch to manage agent sessions in this initiative.",
           "Use $tabs to open a background iTerm2 tab in this project group."
         ]
       }

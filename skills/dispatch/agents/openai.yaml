@@ -1,0 +1,4 @@
+interface:
+  display_name: "Dispatcher: agent sessions"
+  short_description: "Manage initiative-scoped iTerm2 and T3 agent sessions"
+  default_prompt: "Use $dispatch to launch an agent in this initiative and retain its verified session identity."

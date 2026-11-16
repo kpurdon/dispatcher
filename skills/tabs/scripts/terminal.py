@@ -156,7 +156,7 @@ def launch_iterm(command, *, group_name=None, origin_id=None, origin_name=None, 
     return launch.result()
 
 
-def close_tab(tab_id, *, force=False, api=None):
+def close_tab(tab_id, *, force=False, expected_session_id=None, api=None):
     """Close one explicit tab and confirm its absence from a refreshed inventory."""
     if api is None:
         import iterm2 as api
@@ -170,6 +170,8 @@ def close_tab(tab_id, *, force=False, api=None):
             tab = app.get_tab_by_id(tab_id)
             if tab is None:
                 raise RuntimeError(f"no existing iTerm tab with ID {tab_id!r}; use list to verify the target")
+            if expected_session_id is not None and [s.session_id for s in tab.sessions] != [expected_session_id]:
+                raise RuntimeError("tab panes no longer match the recorded member; preserve unrelated sessions")
             result["window_id"] = tab.window.window_id if tab.window else None
             result["close"] = "uncertain"
             await tab.async_close(force=force)
@@ -191,6 +193,29 @@ def close_tab(tab_id, *, force=False, api=None):
         message = str(errors[0]) or type(errors[0]).__name__
         recovery = "closure was verified" if result["close"] == "confirmed" else "use list to reconcile before retrying"
         result["warning"] = f"{message}; {recovery}"
+    return result
+
+
+def inspect_tab(tab_id, api=None):
+    """Inspect just the selected tab, without exposing another initiative's inventory."""
+    if api is None:
+        import iterm2 as api
+    result = {}
+
+    async def run(connection):
+        app = await api.async_get_app(connection)
+        await app.async_refresh()
+        tab = app.get_tab_by_id(tab_id)
+        if tab is None:
+            result.update(tab_id=tab_id, present=False)
+        else:
+            result.update(tab_id=tab_id, present=True,
+                          window_id=tab.window.window_id if tab.window else None,
+                          sessions=[{"session_id": s.session_id, "name": s.name} for s in tab.sessions])
+
+    api.run_until_complete(run)
+    if not result:
+        raise RuntimeError("iTerm returned no inspection result")
     return result
 
 

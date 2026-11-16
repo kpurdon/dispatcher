@@ -1,11 +1,11 @@
 {
-  "name": "kpurdon-iterm2",
+  "name": "kpurdon-dispatcher",
   "interface": {
-    "displayName": "iterm2"
+    "displayName": "Dispatcher"
   },
   "plugins": [
     {
-      "name": "iterm2",
+      "name": "dispatcher",
       "source": {
         "source": "local",
         "path": "./"

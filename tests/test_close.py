@@ -12,14 +12,15 @@ from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "skills/tabs/scripts"))
 import tabs
-from terminal import close_tab
+from terminal import close_tab, inspect_tab
 
 
 class FakeAPI:
     def __init__(self, *, missing=False, remains=False, close_error=None,
                  refresh_error_at=None, runner_error=None, skip_callback=False):
         self.target = SimpleNamespace(tab_id="target", window=SimpleNamespace(window_id="window"),
-                                      async_close=self.close)
+                                      async_close=self.close,
+                                      sessions=[SimpleNamespace(session_id="pane", name="receiver")])
         self.other = SimpleNamespace(tab_id="other")
         self.tabs = {"other": self.other}
         if not missing:
@@ -58,6 +59,23 @@ class FakeAPI:
 
 
 class CloseTests(unittest.TestCase):
+    def test_scoped_close_preserves_an_added_or_replaced_pane(self):
+        for sessions in ([SimpleNamespace(session_id="other")],
+                         [SimpleNamespace(session_id="pane"), SimpleNamespace(session_id="other")]):
+            api = FakeAPI()
+            api.target.sessions = sessions
+            with self.assertRaises(RuntimeError):
+                close_tab("target", expected_session_id="pane", api=api)
+            self.assertEqual(api.close_calls, [])
+        api = FakeAPI()
+        self.assertEqual(close_tab("target", expected_session_id="pane", api=api)["close"], "confirmed")
+
+    def test_scoped_inspection_excludes_unrelated_tabs(self):
+        result = inspect_tab("target", api=FakeAPI())
+        self.assertEqual(result, {"tab_id": "target", "present": True, "window_id": "window",
+                                  "sessions": [{"session_id": "pane", "name": "receiver"}]})
+        self.assertEqual(inspect_tab("missing", api=FakeAPI()), {"tab_id": "missing", "present": False})
+
     def test_closes_only_exact_target_and_verifies_absence(self):
         for force in (False, True):
             with self.subTest(force=force):
