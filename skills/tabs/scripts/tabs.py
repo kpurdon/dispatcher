@@ -13,7 +13,7 @@ import tempfile
 import uuid
 
 from origin import resolve_origin
-from terminal import close_tab, launch_iterm, list_destinations
+from terminal import close_tab, inspect_tab, launch_iterm, list_destinations
 
 
 def launch_command(payload_path):
@@ -42,9 +42,12 @@ def parse_args(argv):
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="operation", required=True)
     commands.add_parser("list", help="read window, group, tab, and session IDs and names")
+    inspecting = commands.add_parser("inspect", help="inspect only one selected tab")
+    inspecting.add_argument("--tab-id", required=True)
     closing = commands.add_parser("close", help="close one explicit tab, including all its split panes")
     closing.add_argument("--tab-id", required=True, help="verified tab ID from list or an open result")
     closing.add_argument("--force", action="store_true", help="bypass iTerm's close confirmation")
+    closing.add_argument("--only-session", help="refuse closure unless this is the tab's only pane")
     closing.add_argument("--dry-run", action="store_true", help="validate input without connecting to iTerm")
     opening = commands.add_parser("open", help="open one new background tab")
     opening.add_argument("--cwd", type=Path, default=Path.cwd())
@@ -63,10 +66,13 @@ def parse_args(argv):
     opening.add_argument("--dry-run", action="store_true", help="validate input without connecting to iTerm")
     opening.add_argument("command", nargs=argparse.REMAINDER, help="command and arguments after --; defaults to login zsh")
     args = parser.parse_args(argv)
-    if args.operation == "close":
+    if args.operation in ("close", "inspect"):
         if not args.tab_id.strip() or any(ord(c) < 32 or ord(c) == 127 for c in args.tab_id):
             parser.error("tab ID must be nonempty and contain no control characters")
-        if not args.dry_run and sys.platform != "darwin":
+        if args.operation == "close" and args.only_session is not None:
+            if not args.only_session.strip() or any(ord(c) < 32 for c in args.only_session):
+                parser.error("session ID must be nonempty and contain no control characters")
+        if not getattr(args, "dry_run", False) and sys.platform != "darwin":
             parser.error("iTerm2 requires macOS")
         return args
     if args.operation == "list":
@@ -105,9 +111,13 @@ def main(argv=None):
         if args.operation == "list":
             print(json.dumps(list_destinations()))
             return 0
+        if args.operation == "inspect":
+            print(json.dumps(inspect_tab(args.tab_id)))
+            return 0
         if args.operation == "close":
             result = ({"close": "dry-run", "tab_id": args.tab_id, "destination": "unverified"}
-                      if args.dry_run else close_tab(args.tab_id, force=args.force))
+                      if args.dry_run else close_tab(args.tab_id, force=args.force,
+                          **({"expected_session_id": args.only_session} if args.only_session else {})))
             print(json.dumps(result))
             if "warning" in result:
                 print(f"iterm2: {result['close']}: {result['warning']}", file=sys.stderr)

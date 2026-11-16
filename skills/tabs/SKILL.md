@@ -1,6 +1,6 @@
 ---
 name: tabs
-description: Inspect iTerm2 destinations, open background tabs in the intended window and group, and close explicitly selected tabs.
+description: inspect iterm2 destinations, open background tabs in the intended window and group, and close explicitly selected tabs.
 ---
 
 # tabs
