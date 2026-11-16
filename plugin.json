@@ -14,8 +14,8 @@
         "displayName": "dispatcher",
         "shortDescription": "scoped agent sessions in iterm2 and t3",
         "defaultPrompt": [
-          "Use $dispatch to manage agent sessions in this initiative.",
-          "Use $tabs to open a background iTerm2 tab in this project group."
+          "use $dispatch to manage agent sessions in this initiative.",
+          "use $tabs to open a background iterm2 tab in this project group."
         ]
       }
     }

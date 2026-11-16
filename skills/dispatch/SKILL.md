@@ -1,6 +1,6 @@
 ---
 name: dispatch
-description: Launch, inspect, message, and retire initiative-scoped agent sessions through iTerm2 or T3, with explicit membership and stable backend identities.
+description: launch, inspect, message, and retire initiative-scoped agent sessions through iterm2 or t3, with explicit membership and stable backend identities.
 ---
 
 # Dispatch agent sessions

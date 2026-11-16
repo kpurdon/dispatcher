@@ -1,4 +1,4 @@
 interface:
   display_name: "iterm2: tabs"
   short_description: "open grouped background tabs and close tabs by id"
-  default_prompt: "Use $tabs to open a background iTerm2 tab in this project group."
+  default_prompt: "use $tabs to open a background iterm2 tab in this project group."
